@@ -45,4 +45,8 @@ public class FileService {
     public List<File> findFilesByUserId(Long userId) {
         return fileRepository.findFilesByUserId(userId);
     }
+
+    public void delete(Long fileId) {
+        fileRepository.deleteById(fileId);
+    }
 }

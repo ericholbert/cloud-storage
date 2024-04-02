@@ -19,10 +19,10 @@ public class UserStorage {
     @AllArgsConstructor
     @EqualsAndHashCode
     public static class Pk implements Serializable {
-        @ManyToOne(cascade = CascadeType.ALL)
+        @ManyToOne
         @JoinColumn(name = "user_id")
         private User user;
-        @ManyToOne(cascade =  CascadeType.ALL)
+        @ManyToOne
         @JoinColumn(name = "file_id")
         private File file;
     }

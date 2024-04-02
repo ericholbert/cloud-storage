@@ -42,4 +42,10 @@ public class FileController {
     public ResponseEntity<List<File>> findAll(@PathVariable Long userId) {
         return ResponseEntity.ok(fileService.findFilesByUserId(userId));
     }
+
+    @DeleteMapping("/delete/{fileId}")
+    public ResponseEntity<File> delete(@PathVariable Long fileId) {
+        fileService.delete(fileId);
+        return ResponseEntity.noContent().build();
+    }
 }
