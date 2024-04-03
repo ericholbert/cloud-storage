@@ -36,12 +36,15 @@ public class CloudStorageSecurity {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(configurer ->
-                configurer
+        http
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers("/api/v1/users/register").permitAll()
+                        .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().authenticated()
-        );
-        http.httpBasic(Customizer.withDefaults());
-        http.csrf(AbstractHttpConfigurer::disable);
+                )
+                .httpBasic(Customizer.withDefaults())
+                .csrf(AbstractHttpConfigurer::disable)
+                /*.formLogin(Customizer.withDefaults())*/;
         return http.build();
     }
 }

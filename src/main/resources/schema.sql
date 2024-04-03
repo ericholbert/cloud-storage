@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS users, files, users_files;
 CREATE TABLE users (
 id BIGINT AUTO_INCREMENT,
 name VARCHAR(45) NOT NULL UNIQUE,
+password CHAR(68) NOT NULL,
 PRIMARY KEY (id)
 );
 
@@ -35,22 +36,22 @@ CONSTRAINT fk_file
 );
 
 INSERT INTO users VALUES
-	(1, 'user1'),
-	(2, 'user2'),
-    (3, 'user3'),
-    (4, 'user4');
+	(100, 'user1', '{noop}password'),
+	(200, 'user2', '{noop}password'),
+    (300, 'user3', '{noop}password'),
+    (400, 'user4', '{noop}password');
 
 INSERT INTO files VALUES
-	(10, 1, 'img001.jpg'),
-    (20, 1, 'backup.zip'),
-    (30, 2, 'photo001.jpg'),
-    (40, 3, 'img001.jpg'),
-    (50, 3, 'notes.txt');
+	(10, 100, 'img001.jpg'),
+    (20, 100, 'backup.zip'),
+    (30, 200, 'photo001.jpg'),
+    (40, 300, 'img001.jpg'),
+    (50, 300, 'notes.txt');
 
 INSERT INTO users_files VALUES
-	(1, 10),
-    (1, 20),
-    (2, 30),
-    (3, 40),
-    (3, 50),
-    (4, 10);
+	(100, 10),
+    (100, 20),
+    (200, 30),
+    (300, 40),
+    (300, 50),
+    (400, 10);

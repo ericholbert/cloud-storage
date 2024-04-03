@@ -1,6 +1,7 @@
 package org.example.controller;
 
 import org.example.domain.dto.ShareDetailsDto;
+import org.example.domain.entity.User;
 import org.example.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,6 +15,11 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @PostMapping("/register")
+    ResponseEntity<User> register(@RequestBody User user) {
+        return ResponseEntity.ok(userService.registerUser(user));
     }
 
     @PostMapping("/share/{fileId}/{userName}")

@@ -23,6 +23,14 @@ public class UserService {
         this.userStorageRepository = userStorageRepository;
     }
 
+    // TODO: Can't be tested unless I add the user to the InMemoryUserDetailsManager
+    public User registerUser(User user) {
+        User dbUser = new User();
+        dbUser.setName(user.getName());
+        dbUser.setPassword(user.getPassword());
+        return userRepository.save(dbUser);
+    }
+
     public ShareDetailsDto shareWithUser(Long fileId, String userName) {
         File file = fileRepository.findById(fileId).get();
         User user = userRepository.findUserByUserName(userName);
