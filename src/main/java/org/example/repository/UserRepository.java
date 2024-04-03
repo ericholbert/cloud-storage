@@ -16,4 +16,10 @@ public interface UserRepository extends JpaRepository<User, Long> {
             JOIN us.file f
             WHERE f.id = :fileId""")
     List<User> findShareUsersByFileId(Long fileId);
+
+    @Query("""
+            SELECT u
+            FROM User u
+            WHERE u.name = :userName""")
+    User findUserByUserName(String userName);
 }

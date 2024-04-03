@@ -14,6 +14,6 @@ public interface FileRepository extends JpaRepository<File, Long> {
             FROM UserStorage us
             JOIN us.user u
             JOIN us.file f
-            WHERE u.id = :userId""")
-    List<File> findFilesByUserId(Long userId);
+            WHERE u.name = :userName""")
+    List<File> findFilesByUserName(String userName);
 }

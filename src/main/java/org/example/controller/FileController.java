@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,32 +21,32 @@ public class FileController {
         this.fileService = fileService;
     }
 
-    @PostMapping("/{ownerId}/upload")
-    public ResponseEntity<List<File>> upload(@RequestPart("files") MultipartFile[] files, @PathVariable Long ownerId) throws Exception {
+    @PostMapping("/upload")
+    public ResponseEntity<List<File>> uploadAll(@RequestPart("files") MultipartFile[] files, Principal principal) throws Exception {
         List<File> r = new ArrayList<>();
         for (MultipartFile file : files) {
-            r.add(fileService.saveFile(file, ownerId));
+            r.add(fileService.saveFile(file, principal.getName()));
         }
         return ResponseEntity.ok(r);
     }
 
     @GetMapping("/download/{fileId}")
-    public ResponseEntity<byte[]> download(@PathVariable Long fileId) throws IOException {
-        FileDetailsDto fileDetails = fileService.readFile(fileId);
+    public ResponseEntity<byte[]> download(@PathVariable Long fileId, Principal principal) throws IOException {
+        FileDetailsDto fileDetails = fileService.readFile(fileId, principal.getName());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         headers.setContentDisposition(ContentDisposition.formData().filename(fileDetails.name()).build());
         return new ResponseEntity<>(fileDetails.bytes(), headers, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}/list")
-    public ResponseEntity<List<File>> findAll(@PathVariable Long userId) {
-        return ResponseEntity.ok(fileService.findFilesByUserId(userId));
+    @GetMapping("/list")
+    public ResponseEntity<List<File>> findAll(Principal principal) {
+        return ResponseEntity.ok(fileService.findUserFiles(principal.getName()));
     }
 
     @DeleteMapping("/delete/{fileId}")
-    public ResponseEntity<File> delete(@PathVariable Long fileId) {
-        fileService.delete(fileId);
+    public ResponseEntity<File> delete(@PathVariable Long fileId, Principal principal) {
+        fileService.deleteFile(fileId, principal.getName());
         return ResponseEntity.noContent().build();
     }
 }

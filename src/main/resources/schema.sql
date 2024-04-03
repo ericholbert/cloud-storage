@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS users, files, users_files;
 
 CREATE TABLE users (
 id BIGINT AUTO_INCREMENT,
-name VARCHAR(45) NOT NULL,
+name VARCHAR(45) NOT NULL UNIQUE,
 PRIMARY KEY (id)
 );
 

@@ -23,25 +23,29 @@ public class UserService {
         this.userStorageRepository = userStorageRepository;
     }
 
-    public ShareDetailsDto share(Long userId, Long fileId) {
-        User user = userRepository.findById(userId).get();
+    public ShareDetailsDto shareWithUser(Long fileId, String userName) {
         File file = fileRepository.findById(fileId).get();
+        User user = userRepository.findUserByUserName(userName);
         userStorageRepository.save(new UserStorage(user, file));
         List<User> shareUsers = userRepository.findShareUsersByFileId(fileId);
         return new ShareDetailsDto(file.getName(), file.getOwner(), shareUsers);
     }
 
-    public ShareDetailsDto unshare(Long userId, Long fileId) {
-        User user = userRepository.findById(userId).get();
+    public ShareDetailsDto unshareWithUser(Long fileId, String userName) {
         File file = fileRepository.findById(fileId).get();
+        User user = userRepository.findUserByUserName(userName);
         userStorageRepository.delete(new UserStorage(user, file));
         List<User> shareUsers = userRepository.findShareUsersByFileId(fileId);
         return new ShareDetailsDto(file.getName(), file.getOwner(), shareUsers);
     }
 
-    public ShareDetailsDto find(Long fileId) {
-        File file = fileRepository.findById(fileId).get();
-        List<User> shareUsers = userRepository.findShareUsersByFileId(fileId);
-        return new ShareDetailsDto(file.getName(), file.getOwner(), shareUsers);
+    public ShareDetailsDto findShareUsers(Long fileId, String ownerName) {
+        if (ownerName.equals(fileRepository.findById(fileId).get().getOwner().getName())) {
+            File file = fileRepository.findById(fileId).get();
+            List<User> shareUsers = userRepository.findShareUsersByFileId(fileId);
+            return new ShareDetailsDto(file.getName(), file.getOwner(), shareUsers);
+        } else {
+            throw new RuntimeException("Wrong authentication!");
+        }
     }
 }

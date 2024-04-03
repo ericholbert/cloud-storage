@@ -27,26 +27,34 @@ public class FileService {
         this.userStorageRepository = userStorageRepository;
     }
 
-    public File saveFile(MultipartFile mpFile, Long ownerId) {
-        User owner = userRepository.findById(ownerId).get();
+    public File saveFile(MultipartFile mpFile, String userName) {
+        User owner = userRepository.findUserByUserName(userName);
         File file = new File(owner, mpFile.getOriginalFilename());
         File dbFile = fileRepository.save(file);
         userStorageRepository.save(new UserStorage(owner, dbFile));
         return dbFile;
     }
 
-    public FileDetailsDto readFile(Long id) throws IOException {
-        // TODO: The file object should contain a path to the file in the file system
-        File file = fileRepository.findById(id).get();
-        byte[] bytes = Files.readAllBytes(Path.of("src/main/resources/dev_test/pic.jpg"));
-        return new FileDetailsDto(file.getName(), bytes);
+    public FileDetailsDto readFile(Long id, String userName) throws IOException {
+        if (userName.equals(fileRepository.findById(id).get().getOwner().getName())) {
+            // TODO: The file object should contain a path to the file in the file system
+            File file = fileRepository.findById(id).get();
+            byte[] bytes = Files.readAllBytes(Path.of("src/main/resources/dev_test/pic.jpg"));
+            return new FileDetailsDto(file.getName(), bytes);
+        } else {
+            throw new RuntimeException("Wrong authentication!");
+        }
     }
 
-    public List<File> findFilesByUserId(Long userId) {
-        return fileRepository.findFilesByUserId(userId);
+    public List<File> findUserFiles(String userName) {
+        return fileRepository.findFilesByUserName(userName);
     }
 
-    public void delete(Long fileId) {
-        fileRepository.deleteById(fileId);
+    public void deleteFile(Long fileId, String userName) {
+        if (userName.equals(fileRepository.findById(fileId).get().getOwner().getName())) {
+            fileRepository.deleteById(fileId);
+        } else {
+            throw new RuntimeException("Wrong authentication!");
+        }
     }
 }
