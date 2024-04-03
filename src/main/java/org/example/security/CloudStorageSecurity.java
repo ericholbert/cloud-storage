@@ -39,7 +39,6 @@ public class CloudStorageSecurity {
         http
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/v1/users/register").permitAll()
-                        .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .httpBasic(Customizer.withDefaults())

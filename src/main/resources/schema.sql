@@ -1,3 +1,5 @@
+USE cloud_storage_db;
+
 DROP TABLE IF EXISTS users, files, users_files;
 
 CREATE TABLE users (
@@ -36,22 +38,22 @@ CONSTRAINT fk_file
 );
 
 INSERT INTO users VALUES
-	(100, 'user1', '{noop}password'),
-	(200, 'user2', '{noop}password'),
-    (300, 'user3', '{noop}password'),
-    (400, 'user4', '{noop}password');
+	(1, 'user1', '{noop}password'),
+	(2, 'user2', '{noop}password'),
+    (3, 'user3', '{noop}password'),
+    (4, 'user4', '{noop}password');
 
 INSERT INTO files VALUES
-	(10, 100, 'img001.jpg'),
-    (20, 100, 'backup.zip'),
-    (30, 200, 'photo001.jpg'),
-    (40, 300, 'img001.jpg'),
-    (50, 300, 'notes.txt');
+	(1, 1, 'img001.jpg'),
+    (2, 1, 'backup.zip'),
+    (3, 2, 'photo001.jpg'),
+    (4, 3, 'img001.jpg'),
+    (5, 3, 'notes.txt');
 
 INSERT INTO users_files VALUES
-	(100, 10),
-    (100, 20),
-    (200, 30),
-    (300, 40),
-    (300, 50),
-    (400, 10);
+	(1, 1),
+    (1, 2),
+    (2, 3),
+    (3, 4),
+    (3, 5),
+    (4, 1);
