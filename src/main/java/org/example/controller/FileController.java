@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/files")
 public class FileController {
     private FileService fileService;
 
@@ -57,7 +56,7 @@ public class FileController {
     }
 
     @DeleteMapping("/share/{fileId}/{userName}")
-    ResponseEntity<FileDetailsDto> unshare(@PathVariable Long fileId,@PathVariable String userName, Principal principal) {
+    ResponseEntity<FileDetailsDto> unshare(@PathVariable Long fileId, @PathVariable String userName, Principal principal) {
         return ResponseEntity.ok(fileService.unshareWithUser(fileId, userName, principal.getName()));
     }
 }
