@@ -1,6 +1,7 @@
 package org.example.controller;
 
 import org.example.domain.dto.FileDataDto;
+import org.example.domain.dto.FileDetailsDto;
 import org.example.domain.entity.File;
 import org.example.service.FileService;
 import org.springframework.http.*;
@@ -22,8 +23,8 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<List<File>> uploadAll(@RequestPart("files") MultipartFile[] files, Principal principal) throws Exception {
-        List<File> r = new ArrayList<>();
+    public ResponseEntity<List<FileDetailsDto>> uploadAll(@RequestPart("files") MultipartFile[] files, Principal principal) throws Exception {
+        List<FileDetailsDto> r = new ArrayList<>();
         for (MultipartFile file : files) {
             r.add(fileService.saveFile(file, principal.getName()));
         }
@@ -32,15 +33,15 @@ public class FileController {
 
     @GetMapping("/download/{fileId}")
     public ResponseEntity<byte[]> download(@PathVariable Long fileId, Principal principal) throws IOException {
-        FileDataDto fileDetails = fileService.readFile(fileId, principal.getName());
+        FileDataDto fileDataDto = fileService.readFile(fileId, principal.getName());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-        headers.setContentDisposition(ContentDisposition.formData().filename(fileDetails.name()).build());
-        return new ResponseEntity<>(fileDetails.bytes(), headers, HttpStatus.OK);
+        headers.setContentDisposition(ContentDisposition.formData().filename(fileDataDto.name()).build());
+        return new ResponseEntity<>(fileDataDto.bytes(), headers, HttpStatus.OK);
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<File>> findAll(Principal principal) {
+    public ResponseEntity<List<FileDetailsDto>> findAll(Principal principal) {
         return ResponseEntity.ok(fileService.findUserFiles(principal.getName()));
     }
 
@@ -48,5 +49,15 @@ public class FileController {
     public ResponseEntity<File> delete(@PathVariable Long fileId, Principal principal) {
         fileService.deleteFile(fileId, principal.getName());
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/share/{fileId}/{userName}")
+    ResponseEntity<FileDetailsDto> share(@PathVariable Long fileId, @PathVariable String userName) {
+        return ResponseEntity.ok(fileService.shareWithUser(fileId, userName));
+    }
+
+    @DeleteMapping("/share/{fileId}/{userName}")
+    ResponseEntity<FileDetailsDto> unshare(@PathVariable Long fileId,@PathVariable String userName) {
+        return ResponseEntity.ok(fileService.unshareWithUser(fileId, userName));
     }
 }
