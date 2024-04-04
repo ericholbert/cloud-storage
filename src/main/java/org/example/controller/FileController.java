@@ -1,6 +1,6 @@
 package org.example.controller;
 
-import org.example.domain.dto.FileDetailsDto;
+import org.example.domain.dto.FileDataDto;
 import org.example.domain.entity.File;
 import org.example.service.FileService;
 import org.springframework.http.*;
@@ -32,7 +32,7 @@ public class FileController {
 
     @GetMapping("/download/{fileId}")
     public ResponseEntity<byte[]> download(@PathVariable Long fileId, Principal principal) throws IOException {
-        FileDetailsDto fileDetails = fileService.readFile(fileId, principal.getName());
+        FileDataDto fileDetails = fileService.readFile(fileId, principal.getName());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         headers.setContentDisposition(ContentDisposition.formData().filename(fileDetails.name()).build());

@@ -1,6 +1,6 @@
 package org.example.service;
 
-import org.example.domain.dto.FileDetailsDto;
+import org.example.domain.dto.FileDataDto;
 import org.example.domain.entity.File;
 import org.example.domain.entity.User;
 import org.example.domain.entity.UserStorage;
@@ -35,12 +35,12 @@ public class FileService {
         return dbFile;
     }
 
-    public FileDetailsDto readFile(Long id, String userName) throws IOException {
+    public FileDataDto readFile(Long id, String userName) throws IOException {
         if (userName.equals(fileRepository.findById(id).get().getOwner().getName())) {
             // TODO: The file object should contain a path to the file in the file system
             File file = fileRepository.findById(id).get();
             byte[] bytes = Files.readAllBytes(Path.of("src/main/resources/dev_test/pic.jpg"));
-            return new FileDetailsDto(file.getName(), bytes);
+            return new FileDataDto(file.getName(), bytes);
         } else {
             throw new RuntimeException("Wrong authentication!");
         }
