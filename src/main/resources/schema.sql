@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS users, files, users_files;
 CREATE TABLE users (
 id BIGINT AUTO_INCREMENT,
 name VARCHAR(45) NOT NULL UNIQUE,
-password CHAR(68) NOT NULL,
+password CHAR(72) NOT NULL,
 PRIMARY KEY (id)
 );
 
@@ -37,11 +37,12 @@ CONSTRAINT fk_file
 	ON UPDATE CASCADE
 );
 
+-- The passwords are 'password'
 INSERT INTO users VALUES
-	(1, 'user1', '{noop}password'),
-	(2, 'user2', '{noop}password'),
-    (3, 'user3', '{noop}password'),
-    (4, 'user4', '{noop}password');
+	(1, 'user1', '$2a$10$I7PssiJfoPU58ceXTkDiauclM8hw6yVt6pBSVpn7IL56J5xIvnv9K'),
+	(2, 'user2', '$2a$10$I7PssiJfoPU58ceXTkDiauclM8hw6yVt6pBSVpn7IL56J5xIvnv9K'),
+    (3, 'user3', '$2a$10$I7PssiJfoPU58ceXTkDiauclM8hw6yVt6pBSVpn7IL56J5xIvnv9K'),
+    (4, 'user4', '$2a$10$I7PssiJfoPU58ceXTkDiauclM8hw6yVt6pBSVpn7IL56J5xIvnv9K');
 
 INSERT INTO files VALUES
 	(1, 1, 'img001.jpg'),

@@ -7,6 +7,7 @@ import org.example.domain.entity.UserStorage;
 import org.example.repository.FileRepository;
 import org.example.repository.UserRepository;
 import org.example.repository.UserStorageRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,17 +17,19 @@ public class UserService {
     private FileRepository fileRepository;
     private UserRepository userRepository;
     private UserStorageRepository userStorageRepository;
+    private PasswordEncoder passwordEncoder;
 
-    public UserService(FileRepository fileRepository, UserRepository userRepository, UserStorageRepository userStorageRepository) {
+    public UserService(FileRepository fileRepository, UserRepository userRepository, UserStorageRepository userStorageRepository, PasswordEncoder passwordEncoder) {
         this.fileRepository = fileRepository;
         this.userRepository = userRepository;
         this.userStorageRepository = userStorageRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public User registerUser(User user) {
         User dbUser = new User();
         dbUser.setName(user.getName());
-        dbUser.setPassword(user.getPassword());
+        dbUser.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(dbUser);
     }
 
