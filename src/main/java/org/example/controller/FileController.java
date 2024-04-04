@@ -52,12 +52,12 @@ public class FileController {
     }
 
     @PostMapping("/share/{fileId}/{userName}")
-    ResponseEntity<FileDetailsDto> share(@PathVariable Long fileId, @PathVariable String userName) {
-        return ResponseEntity.ok(fileService.shareWithUser(fileId, userName));
+    ResponseEntity<FileDetailsDto> share(@PathVariable Long fileId, @PathVariable String userName, Principal principal) {
+        return ResponseEntity.ok(fileService.shareWithUser(fileId, userName, principal.getName()));
     }
 
     @DeleteMapping("/share/{fileId}/{userName}")
-    ResponseEntity<FileDetailsDto> unshare(@PathVariable Long fileId,@PathVariable String userName) {
-        return ResponseEntity.ok(fileService.unshareWithUser(fileId, userName));
+    ResponseEntity<FileDetailsDto> unshare(@PathVariable Long fileId,@PathVariable String userName, Principal principal) {
+        return ResponseEntity.ok(fileService.unshareWithUser(fileId, userName, principal.getName()));
     }
 }

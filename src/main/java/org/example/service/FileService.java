@@ -68,17 +68,25 @@ public class FileService {
         }
     }
 
-    public FileDetailsDto shareWithUser(Long fileId, String userName) {
+    public FileDetailsDto shareWithUser(Long fileId, String userName, String ownerName) {
         File file = fileRepository.findById(fileId).get();
-        User user = userRepository.findUserByUserName(userName);
-        userStorageRepository.save(new UserStorage(user, file));
-        return fileDetailsDtoMapper.apply(file, userRepository.findShareUsersByFileId(fileId));
+        if (ownerName.equals(file.getOwner().getName())) {
+            User user = userRepository.findUserByUserName(userName);
+            userStorageRepository.save(new UserStorage(user, file));
+            return fileDetailsDtoMapper.apply(file, userRepository.findShareUsersByFileId(fileId));
+        } else {
+            throw new RuntimeException("Wrong authentication!");
+        }
     }
 
-    public FileDetailsDto unshareWithUser(Long fileId, String userName) {
+    public FileDetailsDto unshareWithUser(Long fileId, String userName, String ownerName) {
         File file = fileRepository.findById(fileId).get();
-        User user = userRepository.findUserByUserName(userName);
-        userStorageRepository.delete(new UserStorage(user, file));
-        return fileDetailsDtoMapper.apply(file, userRepository.findShareUsersByFileId(fileId));
+        if (ownerName.equals(file.getOwner().getName())) {
+            User user = userRepository.findUserByUserName(userName);
+            userStorageRepository.delete(new UserStorage(user, file));
+            return fileDetailsDtoMapper.apply(file, userRepository.findShareUsersByFileId(fileId));
+        } else {
+            throw new RuntimeException("Wrong authentication!");
+        }
     }
 }
