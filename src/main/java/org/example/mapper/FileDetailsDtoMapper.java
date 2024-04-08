@@ -18,6 +18,15 @@ public class FileDetailsDtoMapper implements BiFunction<File, List<User>, FileDe
 
     @Override
     public FileDetailsDto apply(File file, List<User> users) {
-        return new FileDetailsDto(file.getId(), file.getName(), publicUserDtoMapper.apply(file.getOwner()), users.stream().map(user -> publicUserDtoMapper.apply(user)).toList());
+        return new FileDetailsDto(
+                file.getId(),
+                file.getName(),
+                file.getType(),
+                file.getSize(),
+                publicUserDtoMapper.apply(file.getOwner()),
+                users.stream()
+                        .map(user -> publicUserDtoMapper.apply(user))
+                        .toList()
+        );
     }
 }

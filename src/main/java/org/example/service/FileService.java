@@ -34,7 +34,7 @@ public class FileService {
 
     public FileDetailsDto saveFile(MultipartFile mpFile, String userName) {
         User owner = userRepository.findUserByUserName(userName);
-        File file = new File(owner, mpFile.getOriginalFilename());
+        File file = new File(owner, mpFile.getOriginalFilename(), mpFile.getContentType(), mpFile.getSize());
         File dbFile = fileRepository.save(file);
         userStorageRepository.save(new UserStorage(owner, dbFile));
         return fileDetailsDtoMapper.apply(dbFile, userRepository.findShareUsersByFileId(dbFile.getId()));

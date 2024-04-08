@@ -15,6 +15,8 @@ CREATE TABLE files (
     id BIGINT AUTO_INCREMENT,
     owner_id BIGINT NOT NULL,
     name VARCHAR(45) NOT NULL,
+    type VARCHAR(255) NOT NULL,
+    size BIGINT NOT NULL,
     PRIMARY KEY (id),
     CONSTRAINT fk_owner
         FOREIGN KEY (owner_id)

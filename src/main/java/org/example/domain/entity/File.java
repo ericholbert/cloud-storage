@@ -18,9 +18,13 @@ public class File {
     @JoinColumn(name = "owner_id")
     private User owner;
     private String name;
+    private String type;
+    private Long size;
 
-    public File(User owner, String name) {
+    public File(User owner, String name, String type, Long size) {
         this.owner = owner;
         this.name = name;
+        this.type = type;
+        this.size = size;
     }
 }
