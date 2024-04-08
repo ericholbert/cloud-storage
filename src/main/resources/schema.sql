@@ -6,7 +6,7 @@ DROP TABLE IF EXISTS users, files, users_files;
 
 CREATE TABLE users (
     id BIGINT AUTO_INCREMENT,
-    name VARCHAR(45) NOT NULL UNIQUE,
+    name VARCHAR(20) NOT NULL UNIQUE,
     password CHAR(72) NOT NULL,
     PRIMARY KEY (id)
 );
@@ -14,7 +14,7 @@ CREATE TABLE users (
 CREATE TABLE files (
     id BIGINT AUTO_INCREMENT,
     owner_id BIGINT NOT NULL,
-    name VARCHAR(45) NOT NULL,
+    name VARCHAR(255) NOT NULL,
     type VARCHAR(255) NOT NULL,
     size BIGINT NOT NULL,
     path VARCHAR(255) NOT NULL,
