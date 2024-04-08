@@ -9,9 +9,12 @@ import org.example.mapper.FileDetailsDtoMapper;
 import org.example.repository.FileRepository;
 import org.example.repository.UserRepository;
 import org.example.repository.UserStorageRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,6 +27,8 @@ public class FileService {
     private UserRepository userRepository;
     private UserStorageRepository userStorageRepository;
     private FileDetailsDtoMapper fileDetailsDtoMapper;
+    @Value("${custom.storage-location}")
+    private String storageLocation;
 
     public FileService(FileRepository fileRepository, UserRepository userRepository, UserStorageRepository userStorageRepository, FileDetailsDtoMapper fileDetailsDtoMapper) {
         this.fileRepository = fileRepository;
@@ -32,9 +37,9 @@ public class FileService {
         this.fileDetailsDtoMapper = fileDetailsDtoMapper;
     }
 
-    public FileDetailsDto saveFile(MultipartFile mpFile, String userName) {
+    public FileDetailsDto saveFile(MultipartFile mpFile, String userName) throws IOException {
         User owner = userRepository.findUserByUserName(userName);
-        File file = new File(owner, mpFile.getOriginalFilename(), mpFile.getContentType(), mpFile.getSize());
+        File file = new File(owner, mpFile.getOriginalFilename(), mpFile.getContentType(), mpFile.getSize(), saveToFileSystem(mpFile, userName));
         File dbFile = fileRepository.save(file);
         userStorageRepository.save(new UserStorage(owner, dbFile));
         return fileDetailsDtoMapper.apply(dbFile, userRepository.findShareUsersByFileId(dbFile.getId()));
@@ -42,9 +47,8 @@ public class FileService {
 
     public FileDataDto readFile(Long id, String userName) throws IOException {
         if (userName.equals(fileRepository.findById(id).get().getOwner().getName())) {
-            // TODO: The file object should contain a path to the file in the file system
             File file = fileRepository.findById(id).get();
-            byte[] bytes = Files.readAllBytes(Path.of("src/main/resources/dev_test/pic.jpg"));
+            byte[] bytes = readFromFileSystem(file.getPath());
             return new FileDataDto(file.getName(), bytes);
         } else {
             throw new RuntimeException("Wrong authentication!");
@@ -88,5 +92,19 @@ public class FileService {
         } else {
             throw new RuntimeException("Wrong authentication!");
         }
+    }
+
+    private String saveToFileSystem(MultipartFile mpFile, String userName) throws IOException {
+        String parent = "%s/%s".formatted(storageLocation, userName);
+        String path = "%s/%s".formatted(parent, mpFile.getOriginalFilename());
+        Files.createDirectories(Path.of(parent));
+        FileOutputStream outputStream = new FileOutputStream(path);
+        outputStream.write(mpFile.getBytes());
+        return path;
+    }
+
+    private byte[] readFromFileSystem(String path) throws IOException {
+        FileInputStream inputStream = new FileInputStream(path);
+        return inputStream.readAllBytes();
     }
 }

@@ -20,11 +20,13 @@ public class File {
     private String name;
     private String type;
     private Long size;
+    private String path;
 
-    public File(User owner, String name, String type, Long size) {
+    public File(User owner, String name, String type, Long size, String path) {
         this.owner = owner;
         this.name = name;
         this.type = type;
         this.size = size;
+        this.path = path;
     }
 }

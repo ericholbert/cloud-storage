@@ -17,6 +17,7 @@ CREATE TABLE files (
     name VARCHAR(45) NOT NULL,
     type VARCHAR(255) NOT NULL,
     size BIGINT NOT NULL,
+    path VARCHAR(255) NOT NULL,
     PRIMARY KEY (id),
     CONSTRAINT fk_owner
         FOREIGN KEY (owner_id)
