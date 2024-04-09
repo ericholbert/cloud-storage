@@ -10,14 +10,12 @@ import org.example.repository.FileRepository;
 import org.example.repository.UserRepository;
 import org.example.repository.UserStorageRepository;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,9 +53,12 @@ public class FileService {
         }
     }
 
-    public List<FileDetailsDto> findUserFiles(String userName) {
+    public List<FileDetailsDto> findUserFiles(String userName, String ownerName, String fileType, Sort sort) {
+        if (!File.hasValidSortField(sort)) {
+            throw new RuntimeException("Invalid sort field!");
+        }
         List<FileDetailsDto> r = new ArrayList<>();
-        List<File> files = fileRepository.findFilesByUserName(userName);
+        List<File> files = fileRepository.findFilesByUserName(userName, ownerName, fileType, sort);
         for (File file : files) {
             r.add(fileDetailsDtoMapper.apply(file, userRepository.findShareUsersByFileId(file.getId())));
         }
@@ -97,9 +98,10 @@ public class FileService {
     private String saveToFileSystem(MultipartFile mpFile, String userName) throws IOException {
         String parent = "%s/%s".formatted(storageLocation, userName);
         String path = "%s/%s".formatted(parent, mpFile.getOriginalFilename());
-        Files.createDirectories(Path.of(parent));
+        // TODO: Uncomment after testing
+        /*Files.createDirectories(Path.of(parent));
         FileOutputStream outputStream = new FileOutputStream(path);
-        outputStream.write(mpFile.getBytes());
+        outputStream.write(mpFile.getBytes());*/
         return path;
     }
 

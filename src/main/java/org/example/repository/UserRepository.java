@@ -11,10 +11,13 @@ import java.util.List;
 public interface UserRepository extends JpaRepository<User, Long> {
     @Query("""
             SELECT u
-            FROM UserStorage us
-            JOIN us.user u
-            JOIN us.file f
-            WHERE f.id = :fileId""")
+            FROM User u
+            JOIN UserStorage us
+            ON u = us.user
+            JOIN File f
+            ON f = us.file
+            WHERE f.id = :fileId
+            ORDER BY u.name""")
     List<User> findShareUsersByFileId(Long fileId);
 
     @Query("""

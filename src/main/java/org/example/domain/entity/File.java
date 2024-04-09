@@ -4,6 +4,9 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.domain.Sort;
+
+import java.util.Arrays;
 
 @Data
 @NoArgsConstructor
@@ -28,5 +31,14 @@ public class File {
         this.type = type;
         this.size = size;
         this.path = path;
+    }
+
+    // Maybe next time I should use something like DB view instead of bothering with checks for valid sort fields
+    public static boolean hasValidSortField(Sort sort) {
+        return sort.stream()
+                .allMatch(order -> Arrays.stream(File.class.getDeclaredFields())
+                        .filter(field -> !field.getName().equals("path"))
+                        .anyMatch(field -> order.getProperty().equals(field.getName()))
+        );
     }
 }

@@ -52,7 +52,8 @@ public class DevTest implements CommandLineRunner {
         UserStorage us4 = new UserStorage(u3, f4);
         UserStorage us5 = new UserStorage(u3, f5);
         UserStorage us6 = new UserStorage(u4, f1);
-        List<UserStorage> usersFiles = new ArrayList<>(List.of(us1, us2, us3, us4, us5, us6));
+        UserStorage us7 = new UserStorage(u4, f3);
+        List<UserStorage> usersFiles = new ArrayList<>(List.of(us1, us2, us3, us4, us5, us6, us7));
         usersFiles.forEach(userFile -> userStorageRepository.save(userFile));
     }
 }

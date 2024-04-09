@@ -1,6 +1,7 @@
 package org.example.repository;
 
 import org.example.domain.entity.File;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
@@ -11,9 +12,13 @@ import java.util.List;
 public interface FileRepository extends JpaRepository<File, Long> {
     @Query("""
             SELECT f
-            FROM UserStorage us
-            JOIN us.user u
-            JOIN us.file f
-            WHERE u.name = :userName""")
-    List<File> findFilesByUserName(String userName);
+            FROM File f
+            JOIN UserStorage us
+            ON f = us.file
+            JOIN User u
+            ON u = us.user
+            WHERE u.name = :userName
+            AND (:ownerName IS NULL OR f.owner.name = :ownerName)
+            AND (:fileType IS NULL OR f.type = :fileType)""")
+    List<File> findFilesByUserName(String userName, String ownerName, String fileType, Sort sort);
 }
