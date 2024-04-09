@@ -2,12 +2,18 @@ package org.example.controller;
 
 import org.example.domain.dto.FileDataDto;
 import org.example.domain.dto.FileDetailsDto;
+import org.example.domain.entity.File;
 import org.example.mapper.FileDetailsDtoLinkMapper;
 import org.example.service.FileService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedResourcesAssembler;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
+import org.springframework.hateoas.PagedModel;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -24,10 +30,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class FileController {
     private FileService fileService;
     private FileDetailsDtoLinkMapper fileDetailsDtoLinkMapper;
+    PagedResourcesAssembler pagedResourcesAssembler;
 
-    public FileController(FileService fileService, FileDetailsDtoLinkMapper fileDetailsDtoLinkMapper) {
+    public FileController(FileService fileService, FileDetailsDtoLinkMapper fileDetailsDtoLinkMapper, PagedResourcesAssembler pagedResourcesAssembler) {
         this.fileService = fileService;
         this.fileDetailsDtoLinkMapper = fileDetailsDtoLinkMapper;
+        this.pagedResourcesAssembler = pagedResourcesAssembler;
     }
 
     @PostMapping("/upload")
@@ -53,11 +61,11 @@ public class FileController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<CollectionModel<EntityModel<FileDetailsDto>>> findAll(@RequestParam(required = false) String ownerName, @RequestParam(required = false)  String fileType, Sort sort, Principal principal) throws IOException {
-        if (sort.isUnsorted()) {
-            sort = Sort.by(Sort.Direction.ASC, "name");
+    public ResponseEntity<PagedModel<EntityModel<File>>> findAll(@RequestParam(required = false) String ownerName, @RequestParam(required = false)  String fileType, Principal principal, Pageable pageable) throws IOException {
+        if (pageable.getSort().isUnsorted()) {
+            pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "name"));
         }
-        List<FileDetailsDto> files = fileService.findUserFiles(principal.getName(), ownerName, fileType, sort);
+        Page<FileDetailsDto> files = fileService.findUserFiles(principal.getName(), ownerName, fileType, pageable);
         CollectionModel<EntityModel<FileDetailsDto>> collectionModel = fileDetailsDtoLinkMapper.toCollectionModel(files);
         for (EntityModel<FileDetailsDto> entityModel : collectionModel) {
             FileDetailsDto file = entityModel.getContent();
@@ -68,9 +76,8 @@ public class FileController {
                 }
             }
         }
-        // I don't want the optional query parameters to be visible
-        collectionModel.add(linkTo(methodOn(FileController.class).findAll(null, null, null, null)).withSelfRel().expand(ownerName, fileType));
-        return ResponseEntity.ok(collectionModel);
+        PagedModel<EntityModel<File>> pagedModel = pagedResourcesAssembler.toModel(files, fileDetailsDtoLinkMapper);
+        return ResponseEntity.ok(pagedModel);
     }
 
     @DeleteMapping("/delete/{fileId}")

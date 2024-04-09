@@ -6,11 +6,14 @@ import org.example.domain.entity.File;
 import org.example.domain.entity.User;
 import org.example.domain.entity.UserStorage;
 import org.example.mapper.FileDetailsDtoMapper;
+import org.example.mapper.PublicUserDtoMapper;
 import org.example.repository.FileRepository;
 import org.example.repository.UserRepository;
 import org.example.repository.UserStorageRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +30,8 @@ public class FileService {
     private FileDetailsDtoMapper fileDetailsDtoMapper;
     @Value("${custom.storage-location}")
     private String storageLocation;
+    @Autowired
+    PublicUserDtoMapper publicUserDtoMapper;
 
     public FileService(FileRepository fileRepository, UserRepository userRepository, UserStorageRepository userStorageRepository, FileDetailsDtoMapper fileDetailsDtoMapper) {
         this.fileRepository = fileRepository;
@@ -53,16 +58,14 @@ public class FileService {
         }
     }
 
-    public List<FileDetailsDto> findUserFiles(String userName, String ownerName, String fileType, Sort sort) {
-        if (!File.hasValidSortField(sort)) {
+    public Page<FileDetailsDto> findUserFiles(String userName, String ownerName, String fileType, Pageable pageable) {
+        if (!File.hasValidSortField(pageable.getSort())) {
             throw new RuntimeException("Invalid sort field!");
         }
-        List<FileDetailsDto> r = new ArrayList<>();
-        List<File> files = fileRepository.findFilesByUserName(userName, ownerName, fileType, sort);
-        for (File file : files) {
-            r.add(fileDetailsDtoMapper.apply(file, userRepository.findShareUsersByFileId(file.getId())));
-        }
-        return r;
+        List<FileDetailsDto> mappedFiles = new ArrayList<>();
+        Page<File> page = fileRepository.findFilesByUserName(userName, ownerName, fileType, pageable);
+        List<File> files = page.getContent();
+        return page.map(file -> fileDetailsDtoMapper.apply(file, userRepository.findShareUsersByFileId(file.getId())));
     }
 
     public void deleteFile(Long fileId, String userName) {
