@@ -2,7 +2,6 @@ package org.example.controller;
 
 import org.example.domain.dto.FileDataDto;
 import org.example.domain.dto.FileDetailsDto;
-import org.example.domain.entity.File;
 import org.example.mapper.FileDetailsDtoLinkMapper;
 import org.example.service.FileService;
 import org.springframework.data.domain.Page;
@@ -30,7 +29,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class FileController {
     private FileService fileService;
     private FileDetailsDtoLinkMapper fileDetailsDtoLinkMapper;
-    PagedResourcesAssembler pagedResourcesAssembler;
+    private PagedResourcesAssembler pagedResourcesAssembler;
 
     public FileController(FileService fileService, FileDetailsDtoLinkMapper fileDetailsDtoLinkMapper, PagedResourcesAssembler pagedResourcesAssembler) {
         this.fileService = fileService;
@@ -61,22 +60,23 @@ public class FileController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<PagedModel<EntityModel<File>>> findAll(@RequestParam(required = false) String ownerName, @RequestParam(required = false)  String fileType, Principal principal, Pageable pageable) throws IOException {
+    public ResponseEntity<PagedModel<EntityModel<FileDetailsDto>>> findAll(@RequestParam(required = false) String ownerName, @RequestParam(required = false)  String fileType, Principal principal, Pageable pageable) throws IOException {
         if (pageable.getSort().isUnsorted()) {
             pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "name"));
         }
         Page<FileDetailsDto> files = fileService.findUserFiles(principal.getName(), ownerName, fileType, pageable);
         CollectionModel<EntityModel<FileDetailsDto>> collectionModel = fileDetailsDtoLinkMapper.toCollectionModel(files);
-        for (EntityModel<FileDetailsDto> entityModel : collectionModel) {
+        PagedModel<EntityModel<FileDetailsDto>> pagedModel = pagedResourcesAssembler.toModel(files, fileDetailsDtoLinkMapper);
+        for (EntityModel<FileDetailsDto> entityModel : pagedModel) {
             FileDetailsDto file = entityModel.getContent();
+            entityModel.add(getFileLinks(file, "download"));
             if (principal.getName().equals(file.owner().name())) {
-                entityModel.add(getFileLinks(file, "download", "delete", "share"));
+                entityModel.add(getFileLinks(file, "delete", "share"));
                 if (file.users().size() > 1) {
                     entityModel.add(getFileLinks(file, "unshare"));
                 }
             }
         }
-        PagedModel<EntityModel<File>> pagedModel = pagedResourcesAssembler.toModel(files, fileDetailsDtoLinkMapper);
         return ResponseEntity.ok(pagedModel);
     }
 
