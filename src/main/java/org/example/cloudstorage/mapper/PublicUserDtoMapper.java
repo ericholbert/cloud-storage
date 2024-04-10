@@ -1,7 +1,7 @@
-package org.example.mapper;
+package org.example.cloudstorage.mapper;
 
-import org.example.domain.dto.PublicUserDto;
-import org.example.domain.entity.User;
+import org.example.cloudstorage.domain.dto.PublicUserDto;
+import org.example.cloudstorage.domain.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Function;

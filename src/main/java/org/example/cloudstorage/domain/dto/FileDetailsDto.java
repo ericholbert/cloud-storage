@@ -1,4 +1,4 @@
-package org.example.domain.dto;
+package org.example.cloudstorage.domain.dto;
 
 import org.springframework.hateoas.server.core.Relation;
 

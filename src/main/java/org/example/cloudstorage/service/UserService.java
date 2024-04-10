@@ -1,9 +1,9 @@
-package org.example.service;
+package org.example.cloudstorage.service;
 
-import org.example.domain.dto.PublicUserDto;
-import org.example.domain.entity.User;
-import org.example.mapper.PublicUserDtoMapper;
-import org.example.repository.UserRepository;
+import org.example.cloudstorage.domain.dto.PublicUserDto;
+import org.example.cloudstorage.mapper.PublicUserDtoMapper;
+import org.example.cloudstorage.repository.UserRepository;
+import org.example.cloudstorage.domain.entity.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

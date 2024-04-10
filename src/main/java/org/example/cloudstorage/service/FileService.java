@@ -1,15 +1,15 @@
-package org.example.service;
+package org.example.cloudstorage.service;
 
-import org.example.domain.dto.FileDataDto;
-import org.example.domain.dto.FileDetailsDto;
-import org.example.domain.entity.File;
-import org.example.domain.entity.User;
-import org.example.domain.entity.UserStorage;
-import org.example.mapper.FileDetailsDtoMapper;
-import org.example.mapper.PublicUserDtoMapper;
-import org.example.repository.FileRepository;
-import org.example.repository.UserRepository;
-import org.example.repository.UserStorageRepository;
+import org.example.cloudstorage.domain.dto.FileDataDto;
+import org.example.cloudstorage.mapper.PublicUserDtoMapper;
+import org.example.cloudstorage.repository.FileRepository;
+import org.example.cloudstorage.repository.UserRepository;
+import org.example.cloudstorage.domain.dto.FileDetailsDto;
+import org.example.cloudstorage.domain.entity.File;
+import org.example.cloudstorage.domain.entity.User;
+import org.example.cloudstorage.domain.entity.UserStorage;
+import org.example.cloudstorage.mapper.FileDetailsDtoMapper;
+import org.example.cloudstorage.repository.UserStorageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;

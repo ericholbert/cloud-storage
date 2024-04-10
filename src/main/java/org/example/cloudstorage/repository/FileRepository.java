@@ -1,6 +1,6 @@
-package org.example.repository;
+package org.example.cloudstorage.repository;
 
-import org.example.domain.entity.File;
+import org.example.cloudstorage.domain.entity.File;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

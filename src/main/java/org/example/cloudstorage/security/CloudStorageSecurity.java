@@ -1,6 +1,6 @@
-package org.example.security;
+package org.example.cloudstorage.security;
 
-import org.example.service.UserAuthService;
+import org.example.cloudstorage.service.UserAuthService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;

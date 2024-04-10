@@ -1,13 +1,13 @@
-package org.example;
+package org.example.cloudstorage;
 
-import org.example.domain.entity.File;
-import org.example.domain.entity.User;
-import org.example.domain.entity.UserStorage;
-import org.example.repository.FileRepository;
-import org.example.repository.UserRepository;
-import org.example.repository.UserStorageRepository;
-import org.example.service.FileService;
-import org.example.service.UserService;
+import org.example.cloudstorage.domain.entity.File;
+import org.example.cloudstorage.domain.entity.User;
+import org.example.cloudstorage.domain.entity.UserStorage;
+import org.example.cloudstorage.repository.FileRepository;
+import org.example.cloudstorage.repository.UserRepository;
+import org.example.cloudstorage.repository.UserStorageRepository;
+import org.example.cloudstorage.service.FileService;
+import org.example.cloudstorage.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;

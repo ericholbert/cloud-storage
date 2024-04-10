@@ -1,4 +1,4 @@
-package org.example.domain.entity;
+package org.example.cloudstorage.domain.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

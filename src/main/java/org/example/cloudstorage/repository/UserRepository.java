@@ -1,6 +1,6 @@
-package org.example.repository;
+package org.example.cloudstorage.repository;
 
-import org.example.domain.entity.User;
+import org.example.cloudstorage.domain.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

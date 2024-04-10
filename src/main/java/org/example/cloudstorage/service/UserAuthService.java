@@ -1,7 +1,7 @@
-package org.example.service;
+package org.example.cloudstorage.service;
 
-import org.example.domain.entity.User;
-import org.example.repository.UserRepository;
+import org.example.cloudstorage.repository.UserRepository;
+import org.example.cloudstorage.domain.entity.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

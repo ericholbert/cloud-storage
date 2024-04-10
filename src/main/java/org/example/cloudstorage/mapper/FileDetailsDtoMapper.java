@@ -1,8 +1,8 @@
-package org.example.mapper;
+package org.example.cloudstorage.mapper;
 
-import org.example.domain.dto.FileDetailsDto;
-import org.example.domain.entity.File;
-import org.example.domain.entity.User;
+import org.example.cloudstorage.domain.dto.FileDetailsDto;
+import org.example.cloudstorage.domain.entity.File;
+import org.example.cloudstorage.domain.entity.User;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

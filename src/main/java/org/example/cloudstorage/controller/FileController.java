@@ -1,9 +1,9 @@
-package org.example.controller;
+package org.example.cloudstorage.controller;
 
-import org.example.domain.dto.FileDataDto;
-import org.example.domain.dto.FileDetailsDto;
-import org.example.mapper.FileDetailsDtoLinkMapper;
-import org.example.service.FileService;
+import org.example.cloudstorage.domain.dto.FileDataDto;
+import org.example.cloudstorage.service.FileService;
+import org.example.cloudstorage.domain.dto.FileDetailsDto;
+import org.example.cloudstorage.mapper.FileDetailsDtoLinkMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

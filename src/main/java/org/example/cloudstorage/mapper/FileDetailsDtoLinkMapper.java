@@ -1,6 +1,6 @@
-package org.example.mapper;
+package org.example.cloudstorage.mapper;
 
-import org.example.domain.dto.FileDetailsDto;
+import org.example.cloudstorage.domain.dto.FileDetailsDto;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;

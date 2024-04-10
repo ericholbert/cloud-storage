@@ -1,9 +1,9 @@
-package org.example.controller;
+package org.example.cloudstorage.controller;
 
-import org.example.domain.dto.PublicUserDto;
-import org.example.domain.entity.User;
-import org.example.mapper.PublicUserDtoLinkMapper;
-import org.example.service.UserService;
+import org.example.cloudstorage.domain.dto.PublicUserDto;
+import org.example.cloudstorage.service.UserService;
+import org.example.cloudstorage.domain.entity.User;
+import org.example.cloudstorage.mapper.PublicUserDtoLinkMapper;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
