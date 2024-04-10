@@ -1,9 +1,9 @@
 package org.example.cloudstorage.controller;
 
 import org.example.cloudstorage.domain.dto.FileDataDto;
-import org.example.cloudstorage.service.FileService;
 import org.example.cloudstorage.domain.dto.FileDetailsDto;
 import org.example.cloudstorage.mapper.FileDetailsDtoLinkMapper;
+import org.example.cloudstorage.service.FileService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -38,7 +38,7 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<CollectionModel<EntityModel<FileDetailsDto>>> uploadAll(@RequestPart("files") MultipartFile[] mpFiles, Principal principal) throws Exception {
+    public ResponseEntity<CollectionModel<EntityModel<FileDetailsDto>>> uploadAll(@RequestPart("files") MultipartFile[] mpFiles, Principal principal) {
         List<EntityModel<FileDetailsDto>> entityModels = new ArrayList<>();
         for (MultipartFile mpFile : mpFiles) {
             FileDetailsDto file = fileService.saveFile(mpFile, principal.getName());
@@ -51,7 +51,7 @@ public class FileController {
     }
 
     @GetMapping("/download/{fileId}")
-    public ResponseEntity<byte[]> download(@PathVariable Long fileId, Principal principal) throws IOException {
+    public ResponseEntity<byte[]> download(@PathVariable Long fileId, Principal principal) {
         FileDataDto fileDataDto = fileService.readFile(fileId, principal.getName());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -87,18 +87,18 @@ public class FileController {
     }
 
     @PostMapping("/share/{fileId}/{userName}")
-    ResponseEntity<EntityModel<FileDetailsDto>> share(@PathVariable Long fileId, @PathVariable String userName, Principal principal) throws IOException {
+    ResponseEntity<EntityModel<FileDetailsDto>> share(@PathVariable Long fileId, @PathVariable String userName, Principal principal) {
         FileDetailsDto file = fileService.shareWithUser(fileId, userName, principal.getName());
         return handleSharing(file);
     }
 
     @DeleteMapping("/share/{fileId}/{userName}")
-    ResponseEntity<EntityModel<FileDetailsDto>> unshare(@PathVariable Long fileId, @PathVariable String userName, Principal principal) throws IOException {
+    ResponseEntity<EntityModel<FileDetailsDto>> unshare(@PathVariable Long fileId, @PathVariable String userName, Principal principal) {
         FileDetailsDto file = fileService.unshareWithUser(fileId, userName, principal.getName());
         return handleSharing(file);
     }
 
-    private ResponseEntity<EntityModel<FileDetailsDto>> handleSharing(FileDetailsDto file) throws IOException {
+    private ResponseEntity<EntityModel<FileDetailsDto>> handleSharing(FileDetailsDto file) {
         EntityModel<FileDetailsDto> entityModel = fileDetailsDtoLinkMapper.toModel(file);
         entityModel.add(getFileLinks(file, "download", "delete", "share"));
         if (file.users().size() > 1) {
@@ -107,7 +107,7 @@ public class FileController {
         return ResponseEntity.ok(entityModel);
     }
 
-    private Link[] getFileLinks(FileDetailsDto file, String... linkNames) throws IOException {
+    private Link[] getFileLinks(FileDetailsDto file, String... linkNames) {
         List<Link> links = new ArrayList<>();
         for (String linkName : linkNames) {
             switch (linkName) {
