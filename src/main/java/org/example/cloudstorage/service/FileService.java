@@ -1,14 +1,14 @@
 package org.example.cloudstorage.service;
 
 import org.example.cloudstorage.domain.dto.FileDataDto;
-import org.example.cloudstorage.mapper.PublicUserDtoMapper;
-import org.example.cloudstorage.repository.FileRepository;
-import org.example.cloudstorage.repository.UserRepository;
 import org.example.cloudstorage.domain.dto.FileDetailsDto;
 import org.example.cloudstorage.domain.entity.File;
 import org.example.cloudstorage.domain.entity.User;
 import org.example.cloudstorage.domain.entity.UserStorage;
 import org.example.cloudstorage.mapper.FileDetailsDtoMapper;
+import org.example.cloudstorage.mapper.PublicUserDtoMapper;
+import org.example.cloudstorage.repository.FileRepository;
+import org.example.cloudstorage.repository.UserRepository;
 import org.example.cloudstorage.repository.UserStorageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +18,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -70,7 +73,10 @@ public class FileService {
 
     public void deleteFile(Long fileId, String userName) {
         if (userName.equals(fileRepository.findById(fileId).get().getOwner().getName())) {
-            fileRepository.deleteById(fileId);
+            File file = fileRepository.findById(fileId).get();
+            if (deleteFileFromFileSystem(file.getPath())) {
+                fileRepository.deleteById(fileId);
+            }
         } else {
             throw new RuntimeException("Wrong authentication!");
         }
@@ -101,15 +107,19 @@ public class FileService {
     private String saveToFileSystem(MultipartFile mpFile, String userName) throws IOException {
         String parent = "%s/%s".formatted(storageLocation, userName);
         String path = "%s/%s".formatted(parent, mpFile.getOriginalFilename());
-        // TODO: Uncomment after testing
-        /*Files.createDirectories(Path.of(parent));
+        Files.createDirectories(Path.of(parent));
         FileOutputStream outputStream = new FileOutputStream(path);
-        outputStream.write(mpFile.getBytes());*/
+        outputStream.write(mpFile.getBytes());
         return path;
     }
 
     private byte[] readFromFileSystem(String path) throws IOException {
         FileInputStream inputStream = new FileInputStream(path);
         return inputStream.readAllBytes();
+    }
+
+    private boolean deleteFileFromFileSystem(String path) {
+        java.io.File file = new java.io.File(path);
+        return file.delete();
     }
 }
