@@ -84,6 +84,9 @@ public class FileService {
     }
 
     public FileDetailsDto shareWithUser(Long fileId, String userName, String ownerName) {
+        if (ownerName.equals(userName)) {
+            throw new InvalidUserMatchException("You cannot share a file you own with yourself.");
+        }
         File file = fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
         if (ownerName.equals(file.getOwner().getName())) {
             User user = userRepository.findUserByUserName(userName);
@@ -98,6 +101,12 @@ public class FileService {
     }
 
     public FileDetailsDto unshareWithUser(Long fileId, String userName, String ownerName) {
+        if (ownerName.equals(userName)) {
+            throw new InvalidUserMatchException("You cannot lose ownership of your file.");
+        }
+        if (!userRepository.findShareUsersByFileId(fileId).contains(userName)) {
+            throw new InvalidUserMismatchException("You do not share the file with the user.");
+        }
         File file = fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
         if (ownerName.equals(file.getOwner().getName())) {
             User user = userRepository.findUserByUserName(userName);

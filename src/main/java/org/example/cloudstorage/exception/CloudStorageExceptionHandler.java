@@ -34,7 +34,7 @@ public class CloudStorageExceptionHandler extends ResponseEntityExceptionHandler
         return getResponseEntity(e, HttpStatus.NOT_FOUND, request);
     }
 
-    @ExceptionHandler(InvalidSortParameterException.class)
+    @ExceptionHandler(value = {InvalidSortParameterException.class, InvalidUserMatchException.class, InvalidUserMismatchException.class})
     ResponseEntity<ErrorTemplate> handleBadRequestException(RuntimeException e, WebRequest request) {
         return getResponseEntity(e, HttpStatus.BAD_REQUEST, request);
     }
