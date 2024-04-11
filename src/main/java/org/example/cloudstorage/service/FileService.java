@@ -45,6 +45,9 @@ public class FileService {
     }
 
     public FileDetailsDto saveFile(MultipartFile mpFile, String ownerName) {
+        if (fileRepository.findFileByFileName(mpFile.getOriginalFilename()) != null) {
+            throw new FileAlreadyExistsException();
+        }
         User owner = userRepository.findUserByUserName(ownerName);
         File file = new File(owner, mpFile.getOriginalFilename(), mpFile.getContentType(), mpFile.getSize(), saveToFileSystem(mpFile, ownerName));
         File dbFile = fileRepository.save(file);
