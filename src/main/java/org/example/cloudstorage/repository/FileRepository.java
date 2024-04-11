@@ -19,13 +19,16 @@ public interface FileRepository extends JpaRepository<File, Long> {
             WHERE u.name = :accountName
             AND (:ownerName IS NULL OR f.owner.name = :ownerName)
             AND (:fileType IS NULL OR f.type = :fileType)""")
-
     Page<File> findFilesByUserName(String accountName, String ownerName, String fileType, Pageable pageable);
 
     @Query("""
             SELECT f
             FROM File f
+            JOIN UserStorage us
+            ON f = us.file
+            JOIN User u
+            ON u = us.user
             WHERE f.name = :fileName
-            """)
-    File findFileByFileName(String fileName);
+            AND f.owner.name = :ownerName""")
+    File findFileByFileNameAndOwnerName(String fileName, String ownerName);
 }

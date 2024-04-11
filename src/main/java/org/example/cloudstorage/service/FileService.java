@@ -39,7 +39,7 @@ public class FileService {
     }
 
     public FileDetailsDto saveFile(MultipartFile mpFile, String accountName) {
-        if (fileRepository.findFileByFileName(mpFile.getOriginalFilename()) != null) {
+        if (fileRepository.findFileByFileNameAndOwnerName(mpFile.getOriginalFilename(), accountName) != null) {
             throw new FileAlreadyExistsException();
         }
         User owner = userRepository.findUserByUserName(accountName);
