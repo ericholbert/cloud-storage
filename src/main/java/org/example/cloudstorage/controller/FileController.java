@@ -17,7 +17,6 @@ import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
@@ -60,12 +59,11 @@ public class FileController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<PagedModel<EntityModel<FileDetailsDto>>> findAll(@RequestParam(required = false) String ownerName, @RequestParam(required = false)  String fileType, Principal principal, Pageable pageable) throws IOException {
+    public ResponseEntity<PagedModel<EntityModel<FileDetailsDto>>> findAll(@RequestParam(required = false) String ownerName, @RequestParam(required = false)  String fileType, Principal principal, Pageable pageable) {
         if (pageable.getSort().isUnsorted()) {
             pageable = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by(Sort.Direction.ASC, "name"));
         }
         Page<FileDetailsDto> files = fileService.findUserFiles(principal.getName(), ownerName, fileType, pageable);
-        CollectionModel<EntityModel<FileDetailsDto>> collectionModel = fileDetailsDtoLinkMapper.toCollectionModel(files);
         PagedModel<EntityModel<FileDetailsDto>> pagedModel = pagedResourcesAssembler.toModel(files, fileDetailsDtoLinkMapper);
         for (EntityModel<FileDetailsDto> entityModel : pagedModel) {
             FileDetailsDto file = entityModel.getContent();
@@ -88,17 +86,15 @@ public class FileController {
 
     @PostMapping("/share/{fileId}/{userName}")
     ResponseEntity<EntityModel<FileDetailsDto>> share(@PathVariable Long fileId, @PathVariable String userName, Principal principal) {
-        FileDetailsDto file = fileService.shareWithUser(fileId, userName, principal.getName());
-        return handleSharing(file);
+        return doSharing(fileService.shareWithUser(fileId, userName, principal.getName()));
     }
 
     @DeleteMapping("/share/{fileId}/{userName}")
     ResponseEntity<EntityModel<FileDetailsDto>> unshare(@PathVariable Long fileId, @PathVariable String userName, Principal principal) {
-        FileDetailsDto file = fileService.unshareWithUser(fileId, userName, principal.getName());
-        return handleSharing(file);
+        return doSharing(fileService.unshareWithUser(fileId, userName, principal.getName()));
     }
 
-    private ResponseEntity<EntityModel<FileDetailsDto>> handleSharing(FileDetailsDto file) {
+    private ResponseEntity<EntityModel<FileDetailsDto>> doSharing(FileDetailsDto file) {
         EntityModel<FileDetailsDto> entityModel = fileDetailsDtoLinkMapper.toModel(file);
         entityModel.add(getFileLinks(file, "download", "delete", "share"));
         if (file.users().size() > 1) {

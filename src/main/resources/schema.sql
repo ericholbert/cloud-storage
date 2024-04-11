@@ -2,16 +2,14 @@ CREATE DATABASE IF NOT EXISTS user_storage_db;
 
 USE cloud_storage_db;
 
-DROP TABLE IF EXISTS users, files, users_files;
-
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id BIGINT AUTO_INCREMENT,
     name VARCHAR(20) NOT NULL UNIQUE,
     password CHAR(72) NOT NULL,
     PRIMARY KEY (id)
 );
 
-CREATE TABLE files (
+CREATE TABLE IF NOT EXISTS files (
     id BIGINT AUTO_INCREMENT,
     owner_id BIGINT NOT NULL,
     name VARCHAR(255) NOT NULL,
@@ -26,7 +24,7 @@ CREATE TABLE files (
         ON UPDATE CASCADE
 );
 
-CREATE TABLE users_files (
+CREATE TABLE IF NOT EXISTS users_files (
     user_id BIGINT,
     file_id BIGINT,
     PRIMARY KEY (user_id, file_id),
