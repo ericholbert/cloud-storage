@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -54,7 +55,8 @@ public class CloudStorageExceptionHandler extends ResponseEntityExceptionHandler
     }
 
     private <T, S extends Exception, U extends HttpStatusCode> ResponseEntity<T> getResponseEntity(S e, U status, WebRequest request, String detail) {
-        T error = (T) new ErrorTemplate(e.getClass().getSimpleName(), status.value(), detail, request.getContextPath(), LocalDateTime.now());
+        String uri = ((ServletWebRequest) request).getRequest().getRequestURI();
+        T error = (T) new ErrorTemplate(e.getClass().getSimpleName(), status.value(), detail, uri, LocalDateTime.now());
         return new ResponseEntity<T>(error, status);
     }
 }
