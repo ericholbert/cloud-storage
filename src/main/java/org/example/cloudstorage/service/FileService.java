@@ -51,9 +51,12 @@ public class FileService {
 
     public FileDataDto readFile(Long fileId, String accountName) {
         File file = fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
-        checkIfAuthorized(accountName, file.getOwner().getName());
-        byte[] bytes = readFromFileSystem(file.getPath());
-        return new FileDataDto(file.getName(), bytes);
+        if (userRepository.findShareUsersByFileId(fileId).stream().anyMatch(user -> user.getName().equals(accountName))) {
+            byte[] bytes = readFromFileSystem(file.getPath());
+            return new FileDataDto(file.getName(), bytes);
+        } else {
+            throw new UserNotAuthorizedException();
+        }
     }
 
     public Page<FileDetailsDto> findUserFiles(String accountName, String ownerName, String fileType, Pageable pageable) {
