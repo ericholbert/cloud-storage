@@ -96,11 +96,11 @@ public class FileService {
         File file = fileRepository.findById(fileId).orElseThrow(FileNotFoundException::new);
         checkIfAuthorized(accountName, file.getOwner().getName());
         User user = userRepository.findUserByUserName(userName);
-        if (!userRepository.findShareUsersByFileId(fileId).contains(userName)) {
-            throw new InvalidUserMismatchException("You do not share the file with the user.");
-        }
         if (user == null) {
             throw new UserNotFoundException();
+        }
+        if (!userRepository.findShareUsersByFileId(fileId).contains(user)) {
+            throw new InvalidUserMismatchException("You do not share the file with the user.");
         }
         userStorageRepository.delete(new UserStorage(user, file));
         return fileDetailsDtoMapper.apply(file, userRepository.findShareUsersByFileId(fileId));
