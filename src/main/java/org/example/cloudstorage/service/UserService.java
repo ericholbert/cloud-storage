@@ -1,6 +1,7 @@
 package org.example.cloudstorage.service;
 
 import org.example.cloudstorage.domain.dto.PublicUserDto;
+import org.example.cloudstorage.exception.InvalidUserMatchException;
 import org.example.cloudstorage.exception.InvalidUserRequestBodyException;
 import org.example.cloudstorage.mapper.PublicUserDtoMapper;
 import org.example.cloudstorage.repository.UserRepository;
@@ -23,6 +24,9 @@ public class UserService {
     public PublicUserDto registerUser(User user) {
         if (user.getName() == null) {
             throw new InvalidUserRequestBodyException("The request body is missing the 'name' property.");
+        }
+        if (userRepository.findUserByUserName(user.getName()) != null) {
+            throw new InvalidUserMatchException("The user already exists.");
         }
         if (user.getPassword() == null) {
             throw new InvalidUserRequestBodyException("The request body is missing the 'password' property.");
