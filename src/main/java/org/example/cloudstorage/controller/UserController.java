@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
+
 @RestController
 public class UserController {
     private UserService userService;
@@ -21,7 +23,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<EntityModel<PublicUserDto>> register(@RequestBody User user) {
+    public ResponseEntity<EntityModel<PublicUserDto>> register(@RequestBody User user, Principal principal) {
         PublicUserDto userDto = userService.registerUser(user);
         return ResponseEntity.ok(publicUserDtoLinkMapper.toModel(userDto));
     }
