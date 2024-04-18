@@ -19,6 +19,8 @@ import java.time.LocalDateTime;
 public class CloudStorageExceptionHandler extends ResponseEntityExceptionHandler {
     @Value("${spring.servlet.multipart.max-file-size}")
     private String maxFileSize;
+    @Value("${spring.servlet.multipart.max-request-size}")
+    private String maxRequestSize;
 
     @ExceptionHandler(value = {FileNotWrittenException.class, FileNotReadException.class})
     ResponseEntity<ErrorTemplate> handleInternalException(RuntimeException e, WebRequest request) {
@@ -42,7 +44,7 @@ public class CloudStorageExceptionHandler extends ResponseEntityExceptionHandler
 
     @Override
     protected ResponseEntity<Object> handleMaxUploadSizeExceededException(MaxUploadSizeExceededException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        return getResponseEntity(ex, status, request, "The uploaded file must not exceeds %s.".formatted(maxFileSize));
+        return getResponseEntity(ex, status, request, "Maximum upload size exceeded. The limit is %s for the file and %s for the total request size.".formatted(maxFileSize, maxRequestSize));
     }
 
     @Override
