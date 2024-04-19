@@ -1,9 +1,15 @@
 package org.example.cloudstorage.log;
 
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.AfterReturning;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+import org.example.cloudstorage.exception.ErrorTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.ServletWebRequest;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.security.Principal;
@@ -25,20 +31,26 @@ public class CloudStorageLogging {
         logger.info("[%s] Requested '%s'".formatted(user, method));
     }
 
-    // TODO: None-custom exceptions managed by ExceptionHandlerExceptionResolver cannot be caught here for custom logging
-    @AfterThrowing(pointcut = "forControllerPackage()", throwing = "e")
-    public void logAfterThrowingControllerPackage(JoinPoint joinPoint, Throwable e) {
-        String user = getCurrentUser(joinPoint);
-        String exception = e.getClass().getName();
-        String exMessage = e.getMessage();
-        logger.warning("[%s] Caught exception '%s: %s'".formatted(user, exception, exMessage));
-    }
-
     @AfterReturning(pointcut = "forControllerPackage()", returning = "returnedValue")
     public <T> void logAfterReturningControllerPackage(JoinPoint joinPoint, Object returnedValue) {
         String user = getCurrentUser(joinPoint);
         ResponseEntity<T> responseEntity = (ResponseEntity<T>) returnedValue;
         logger.info("[%s] Responded with status '%s'".formatted(user, responseEntity.getStatusCode()));
+    }
+
+    @AfterReturning(pointcut = "execution(* org.example.cloudstorage.exception.CloudStorageExceptionHandler.*(..))", returning = "returnedValue")
+    public <T> void logAfterCloudStorageExceptionHandler(JoinPoint joinPoint, Object returnedValue) {
+        ResponseEntity<T> responseEntity = (ResponseEntity<T>) returnedValue;
+        ErrorTemplate errorTemplate = (ErrorTemplate) responseEntity.getBody();
+        String user = null;
+        for (Object arg : joinPoint.getArgs()) {
+            if (arg instanceof WebRequest request) {
+                user = ((ServletWebRequest) request).getRequest().getUserPrincipal().getName();
+            }
+        }
+        String exception = errorTemplate.title();
+        String exMessage = errorTemplate.detail();
+        logger.warning("[%s] Caught exception '%s: %s'".formatted(user, exception, exMessage));
     }
 
     @Before("within(org.example.cloudstorage.service..*)")
