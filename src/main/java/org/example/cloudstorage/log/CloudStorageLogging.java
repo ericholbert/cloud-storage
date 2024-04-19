@@ -42,10 +42,13 @@ public class CloudStorageLogging {
     public <T> void logAfterCloudStorageExceptionHandler(JoinPoint joinPoint, Object returnedValue) {
         ResponseEntity<T> responseEntity = (ResponseEntity<T>) returnedValue;
         ErrorTemplate errorTemplate = (ErrorTemplate) responseEntity.getBody();
-        String user = null;
+        String user = "public user";
         for (Object arg : joinPoint.getArgs()) {
             if (arg instanceof WebRequest request) {
-                user = ((ServletWebRequest) request).getRequest().getUserPrincipal().getName();
+                Principal principal = ((ServletWebRequest) request).getRequest().getUserPrincipal();
+                if (principal != null) {
+                    user = principal.getName();
+                }
             }
         }
         String exception = errorTemplate.title();
