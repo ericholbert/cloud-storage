@@ -14,7 +14,7 @@ A simple cloud storage accessible via a REST API. Files are stored in the server
 ### User-restricted
 |HTTP method|Endpoint|Description|Detail|
 |:---|:---|:---|:---|
-|`POST`|`/api/v1/upload`|Upload one or multiple files|The files are send as form data using the `files` key.|
+|`POST`|`/api/v1/upload`|Upload one or multiple files|The files are sent as form data using the `files` key.|
 |`GET`|`/api/v1/download/{fileId}`|Download a file||
 |`GET`|`/api/v1/list`|List all user files|The result can be sorted, filtered and paginated. Sorting is allowed by all valid file object properties in ascending or descending order. These are: `id`, `name`, `type`, `size` and `owner` (sorted by owner ID). The result can be filtered by the `ownerName` and `fileType` query parameters.|
 |`DELETE`|`/api/v1/delete/{fileId}`|Delete a file||
